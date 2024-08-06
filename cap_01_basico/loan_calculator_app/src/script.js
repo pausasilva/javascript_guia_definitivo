@@ -1,17 +1,20 @@
 'use strict';
 
 function calculate() {
-  var amount = document.getElementById('#amount');
-  var apr = document.getElementById('#apr');
-  var years = document.getElementById('#years');
-  var zipcode = document.getElementById('#zipcode');
-  var payment = document.getElementById('#payment');
-  var total = document.getElementById('#total');
-  var totalinterest = document.getElementById('#totalinterest');
+  var amount = document.getElementById('amount');
+  var apr = document.getElementById('apr');
+  var years = document.getElementById('years');
+  var zipcode = document.getElementById('zipcode');
+  var payment = document.getElementById('payment');
+  var total = document.getElementById('total');
+  var totalinterest = document.getElementById('totalinterest');
 
   var principal = parseFloat(amount.value);
   var interest = parseFloat(apr.value) / 100 / 12;
   var payments = parseFloat(years.value) * 12;
+
+  var x = Math.pow(1 + interest, payments);
+  var monthly = (principal * x * interest) / (x - 1);
 
   if (isFinite(monthly)) {
     payment.innerHTML = monthly.toFixed(2);
@@ -41,9 +44,9 @@ function calculate() {
 
   window.onload = function () {
     if (window.localStorage && localStorage.loan_amount) {
-      document.getElementById('#amount').value = localStorage.loan_amount;
-      document.getElementById('#apr').value = localStorage.loan_apr;
-      document.getElementById('#years').value = localStorage.loan_years;
+      document.getElementById('amount').value = localStorage.loan_amount;
+      document.getElementById('apr').value = localStorage.loan_apr;
+      document.getElementById('years').value = localStorage.loan_years;
       document.document.getElementById('#zipcode').value =
         localStorage.loan_zipcode;
     }
@@ -51,7 +54,7 @@ function calculate() {
 
   function getLenders(amount, apr, years, zipcodeparams) {
     if (!window.XMLHttpRequest) return;
-    var ad = document.getElementById('#lenders');
+    var ad = document.getElementById('lenders');
     if (!ad) return;
     var url =
       'getLenders.php' +
@@ -139,18 +142,18 @@ function calculate() {
     }
     if (year % 5 == 0 && year * 12 !== payments)
       g.fillText(String(year), x, y - 5);
-  }
-  g.textAlign = 'right';
-  g.textBaseline = 'middle';
-  var ticks = [monthly * payments, principal];
-  var rightEdge = paymentToX(payments);
-  for (var i = 0; i < ticks.length; i++) {
-    var y = amountToY(ticks[i]);
-    g.fillRect(rightEdge - 3, y - 0.5, 3, 1);
-    g.fillText(
-      String(ticks[i].toFixed(0)), // E a rotula.
-      rightEdge - 5,
-      y
-    );
+    g.textAlign = 'right';
+    g.textBaseline = 'middle';
+    var ticks = [monthly * payments, principal];
+    var rightEdge = paymentToX(payments);
+    for (var i = 0; i < ticks.length; i++) {
+      var y = amountToY(ticks[i]);
+      g.fillRect(rightEdge - 3, y - 0.5, 3, 1);
+      g.fillText(
+        String(ticks[i].toFixed(0)), // E a rotula.
+        rightEdge - 5,
+        y
+      );
+    }
   }
 }
